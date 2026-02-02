@@ -17,7 +17,6 @@ public class ProfesorMapper {
         dto.setNumeroTelefonico(profesor.getNumeroTelefonico());
         dto.setDocumento(profesor.getDocumento());
         dto.setNumeroDocumento(profesor.getNumeroDocumento());
-        dto.setTipoContratacion(profesor.getTipoContratacion());
         dto.setGenero(profesor.getGenero());
         dto.setEstado(profesor.getEstado());
         dto.setSexo(profesor.getSexo());
@@ -26,8 +25,6 @@ public class ProfesorMapper {
         dto.setActivo(profesor.getActivo());
         dto.setCodigoEmpleado(profesor.getCodigoEmpleado());
         dto.setFotoPerfil(profesor.getFotoPerfil());
-        dto.setDocumentoTitulo(profesor.getDocumentoTitulo());
-        dto.setDocumentoAtestados(profesor.getDocumentoAtestados());
         dto.setDocumentoDUIPasaporte(profesor.getDocumentoDUIPasaporte());
         dto.setDocumentoNIT(profesor.getDocumentoNIT());
         return dto;
@@ -43,7 +40,6 @@ public class ProfesorMapper {
         profesor.setContrasenia(dto.getContrasenia());
         profesor.setDocumento(dto.getDocumento());
         profesor.setNumeroDocumento(dto.getNumeroDocumento());
-        profesor.setTipoContratacion(dto.getTipoContratacion());
         profesor.setGenero(dto.getGenero());
         profesor.setEstado(dto.getEstado());
         profesor.setSexo(dto.getSexo());
@@ -52,8 +48,6 @@ public class ProfesorMapper {
         profesor.setActivo(dto.getActivo());
         profesor.setCodigoEmpleado(dto.getCodigoEmpleado());
         profesor.setFotoPerfil(dto.getFotoPerfil());
-        profesor.setDocumentoTitulo(dto.getDocumentoTitulo());
-        profesor.setDocumentoAtestados(dto.getDocumentoAtestados());
         profesor.setDocumentoDUIPasaporte(dto.getDocumentoDUIPasaporte());
         profesor.setDocumentoNIT(dto.getDocumentoNIT());
         return profesor;

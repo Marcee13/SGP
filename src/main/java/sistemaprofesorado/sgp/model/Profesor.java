@@ -3,12 +3,13 @@ package sistemaprofesorado.sgp.model;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.*;
+import sistemaprofesorado.sgp.enums.EstadoCivil;
 import sistemaprofesorado.sgp.enums.EstadoProfesor;
 import sistemaprofesorado.sgp.enums.Generos;
 import sistemaprofesorado.sgp.enums.Sexos;
-import sistemaprofesorado.sgp.enums.TipoContratacion;
 import sistemaprofesorado.sgp.enums.TipoDocumento;
 
 @Data
@@ -20,15 +21,20 @@ public class Profesor {
     private Long idProfesor;
     private String nombres;
     private String apellidos;
+    @Column(nullable = false, unique = true)
     private String email;
     private String contrasenia;
     private String numeroTelefonico;
     private LocalDate fechaNacimiento;
     @Enumerated(EnumType.STRING)
+    private EstadoCivil estadoCivil;
+    @Enumerated(EnumType.STRING)
     private TipoDocumento documento;
     private String numeroDocumento;
-    @Enumerated(EnumType.STRING)
-    private TipoContratacion tipoContratacion;
+    @Column(unique = true)
+    private String nup;
+    @Column(unique = true)
+    private String seguroSocial;
     @Enumerated(EnumType.STRING)
     private Generos genero;
     @Enumerated(EnumType.STRING)
@@ -37,24 +43,32 @@ public class Profesor {
     private Sexos sexo;
     @Column(nullable = false)
     private String paisResidencia;
+    private String direccionCompleta;
+    private String municipio;
+    private String departamento;
     private String especialidad;
+    @Column(columnDefinition = "TEXT")
+    private String resumenProfesional;
     private Boolean activo=true;
     @Column(name = "codigo_empleado", nullable = true, unique = true)
     private String codigoEmpleado;
     @Column(name = "foto_perfil")
     private String fotoPerfil;
-    @Column(name = "documento_titulo")
-    private String documentoTitulo;
-    @Column(name = "documento_atestados")
-    private String documentoAtestados;
     @Column(name = "documento_DUI_Pasaporte")
     private String documentoDUIPasaporte;
     @Column(name = "documento_NIT")
     private String documentoNIT;
-    @Column(name = "esta_activo")
-    private Boolean estaActivo = true;
 
     public boolean estaActivo(){
         return this.estado!=null&&this.estado.esActivo();
     }
+
+    @OneToMany(mappedBy = "profesor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TituloAcademico> titulos;
+
+    @OneToMany(mappedBy = "profesor", fetch = FetchType.LAZY)
+    private List<Aplicacion> aplicaciones;
+
+    @OneToMany(mappedBy = "profesor", fetch = FetchType.LAZY)
+    private List<Contrato> contratos;
 }

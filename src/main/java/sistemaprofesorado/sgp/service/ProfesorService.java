@@ -30,7 +30,6 @@ public class ProfesorService {
         entidad.setEstado(EstadoProfesor.ASPIRANTE);
         entidad.setNumeroDocumento(numeroLimpio);
         entidad.setCodigoEmpleado(null);
-        entidad.setTipoContratacion(null);
 
         if (dto.getContrasenia() != null && !dto.getContrasenia().isEmpty()) {
             //entidad.setPassword(passwordEncoder.encode(dto.getContrasenia()));
@@ -42,7 +41,7 @@ public class ProfesorService {
     }
 
     public ProfesorDTO buscarPorCarnetOrEmail(String credencial) {
-        Profesor profesor = profesorRepository.findByNumeroDocumentoOrEmail(credencial, credencial).orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con la credencial proporcionada."));
+        Profesor profesor = profesorRepository.findByCodigoEmpleadoOrEmail(credencial, credencial).orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con la credencial proporcionada."));
         return profesorMapper.toDTO(profesor);
     }
 
