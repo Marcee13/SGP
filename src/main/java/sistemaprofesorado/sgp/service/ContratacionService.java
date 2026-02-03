@@ -66,7 +66,8 @@ public class ContratacionService {
 
     private String generarCodigoEmpleado(Profesor profesor) {
         int anio = LocalDate.now().getYear();
-        long cantidad = profesorRepository.count();
-        return String.format("EMP-%d-%04d", anio, cantidad + 1);
+        char inicialNombre=profesor.getNombres().charAt(0);
+        char inicialApellido=profesor.getApellidos().charAt(0);
+        return String.format("EMP-%c%c-%d-%04d", inicialNombre, inicialApellido, anio, profesor.getIdProfesor());
     }
 }

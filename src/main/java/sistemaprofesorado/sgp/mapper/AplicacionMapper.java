@@ -14,6 +14,15 @@ public class AplicacionMapper {
         dto.setEstadoAplicacion(aplicacion.getEstadoAplicacion());
         dto.setFechaAplicacion(aplicacion.getFechaAplicacion());
         dto.setPuntajeEvaluacion(aplicacion.getPuntajeEvaluacion());
+        if (aplicacion.getProfesor() != null) {
+            dto.setIdProfesor(aplicacion.getProfesor().getIdProfesor());
+            dto.setNombreProfesor(aplicacion.getProfesor().getNombres() + " " + aplicacion.getProfesor().getApellidos());
+        }
+        
+        if (aplicacion.getOfertaLaboral() != null) {
+            dto.setIdOferta(aplicacion.getOfertaLaboral().getIdOferta());
+            dto.setTituloOferta(aplicacion.getOfertaLaboral().getTituloPuesto());
+        }
         return dto;
     }
 

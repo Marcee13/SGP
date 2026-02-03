@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import sistemaprofesorado.sgp.dto.ContratoDTO;
 import sistemaprofesorado.sgp.dto.CrearContratoDTO;
@@ -20,7 +21,7 @@ public class ContratoController {
     private final ContratacionService contratacionService;
 
     @PostMapping("/contratos/generar")
-    public ResponseEntity<ApiResponse<ContratoDTO>> generarContrato(@RequestBody CrearContratoDTO datos) {
+    public ResponseEntity<ApiResponse<ContratoDTO>> generarContrato(@Valid @RequestBody CrearContratoDTO datos) {
         ContratoDTO nuevoContrato = contratacionService.contratarProfesor(datos);
         ApiResponse<ContratoDTO> respuesta = new ApiResponse<>(
             "Contrato generado exitosamente.",
