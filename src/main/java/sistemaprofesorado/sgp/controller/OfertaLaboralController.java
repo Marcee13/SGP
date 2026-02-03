@@ -1,6 +1,7 @@
 package sistemaprofesorado.sgp.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -11,10 +12,6 @@ import lombok.AllArgsConstructor;
 import sistemaprofesorado.sgp.dto.OfertaLaboralDTO;
 import sistemaprofesorado.sgp.response.ApiResponse;
 import sistemaprofesorado.sgp.service.OfertaLaboralService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 
@@ -47,6 +44,7 @@ public class OfertaLaboralController {
     }
 
     @PutMapping("/ofertas/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<OfertaLaboralDTO>> modificarOfertaLaboral(@PathVariable Long id, @Valid @RequestBody OfertaLaboralDTO ofertaLaboralDTO) {
         OfertaLaboralDTO ofertaModificada = ofertaLaboralService.modificarOfertaLaboralDTO(id, ofertaLaboralDTO);
         ApiResponse<OfertaLaboralDTO> respuesta = new ApiResponse<>(
@@ -58,6 +56,7 @@ public class OfertaLaboralController {
     }
 
     @PatchMapping("/ofertas/cerrar/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<OfertaLaboralDTO>> cerrarOfertaLaboral(@PathVariable Long id) {
         OfertaLaboralDTO ofertaCerrada = ofertaLaboralService.cerrarOfertaLaboral(id);
         ApiResponse<OfertaLaboralDTO> respuesta = new ApiResponse<>(
@@ -69,6 +68,7 @@ public class OfertaLaboralController {
     }
 
     @GetMapping("/ofertas/obtener/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<OfertaLaboralDTO>> obtenerOfertaLaboral(@PathVariable Long id) {
         OfertaLaboralDTO oferta = ofertaLaboralService.obtenerOfertaLaboralPorId(id);
         ApiResponse<OfertaLaboralDTO> respuesta = new ApiResponse<>(

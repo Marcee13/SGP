@@ -1,8 +1,5 @@
 package sistemaprofesorado.sgp.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import sistemaprofesorado.sgp.dto.ProfesorDTO;
@@ -13,12 +10,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -62,6 +55,7 @@ public class ProfesorController {
     }
 
     @GetMapping("/profesores/obtener-por-id/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<ProfesorDTO>> obtenerProfesorPorId(@PathVariable Long id) {
         ProfesorDTO profesorDTO = profesorService.obtenerProfesorPorId(id);
         ApiResponse<ProfesorDTO> respuesta = new ApiResponse<>(
@@ -73,6 +67,7 @@ public class ProfesorController {
     }
     
     @GetMapping("/profesores/listar-todos")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<List<ProfesorDTO>>> obtenerTodosLosProfesores() {
         List<ProfesorDTO> profesores = profesorService.obtenerTodosProfesores();
         ApiResponse<List<ProfesorDTO>> respuesta = new ApiResponse<>(
@@ -84,6 +79,7 @@ public class ProfesorController {
     }
 
     @GetMapping("/profesores/activos")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<List<ProfesorDTO>>> obtenerProfesoresActivos() {
         List<ProfesorDTO> profesoresActivos = profesorService.obtenerProfesoresActivos();
         ApiResponse<List<ProfesorDTO>> respuesta = new ApiResponse<>(
@@ -95,6 +91,7 @@ public class ProfesorController {
     }
     
     @GetMapping("/profesores/buscar")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<ProfesorDTO>> buscarPorCredencial(@RequestParam String credencial) {
         ProfesorDTO profesoresEncontrados = profesorService.buscarPorCarnetOrEmail(credencial);
         ApiResponse<ProfesorDTO> respuesta = new ApiResponse<>(
@@ -106,6 +103,7 @@ public class ProfesorController {
     }
     
     @PatchMapping("/profesores/dar-baja/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<Void>> darBajaProfesor(@PathVariable Long id) {
         profesorService.darDeBajaProfesor(id);
         ApiResponse<Void> respuesta = new ApiResponse<>(

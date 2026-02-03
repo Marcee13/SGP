@@ -2,45 +2,54 @@ package sistemaprofesorado.sgp.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import sistemaprofesorado.sgp.dto.ProfesorDTO;
 import sistemaprofesorado.sgp.enums.EstadoProfesor;
+import sistemaprofesorado.sgp.enums.Rol;
 import sistemaprofesorado.sgp.exceptions.DuplicadoException;
 import sistemaprofesorado.sgp.exceptions.RecursoNoEncontradoException;
 import sistemaprofesorado.sgp.mapper.ProfesorMapper;
 import sistemaprofesorado.sgp.model.Profesor;
+import sistemaprofesorado.sgp.model.Usuario;
 import sistemaprofesorado.sgp.repository.ProfesorRepository;
+import sistemaprofesorado.sgp.repository.UsuarioRepository;
 
 @Service
 @AllArgsConstructor
 public class ProfesorService {
     private final ProfesorRepository profesorRepository;
     private final ProfesorMapper profesorMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UsuarioRepository usuarioRepository;
 
     @Transactional
     public ProfesorDTO crearProfesor(ProfesorDTO dto) {
         validarUnico(dto);
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(dto.getEmail());
+        usuario.setRol(Rol.PROFESOR);
+        usuario.setPassword(passwordEncoder.encode(dto.getContrasenia()));
 
         String numeroLimpio = dto.getNumeroDocumento() != null ? dto.getNumeroDocumento().trim() : null;
         if(dto.getDocumento()!=null&&numeroLimpio!=null){
             dto.getDocumento().validar(numeroLimpio);
         }
 
-        Profesor entidad =profesorMapper.toEntity(dto);
+        Profesor profesorEntity = profesorMapper.toEntity(dto);
+        profesorEntity.setEstado(EstadoProfesor.ASPIRANTE);
+        profesorEntity.setNumeroDocumento(numeroLimpio);
+        profesorEntity.setCodigoEmpleado(null);
+        
+        profesorEntity.setUsuario(usuario);
+        usuario.setProfesor(profesorEntity);
 
-        entidad.setEstado(EstadoProfesor.ASPIRANTE);
-        entidad.setNumeroDocumento(numeroLimpio);
-        entidad.setCodigoEmpleado(null);
-
-        if (dto.getContrasenia() != null && !dto.getContrasenia().isEmpty()) {
-            //entidad.setPassword(passwordEncoder.encode(dto.getContrasenia()));
-        } else {
-            throw new IllegalArgumentException("La contraseña es obligatoria para crear un profesor.");
-        }
-        Profesor guardado=profesorRepository.save(entidad);
+        Profesor guardado = profesorRepository.save(profesorEntity);
+        
         return profesorMapper.toDTO(guardado);
     }
 
@@ -113,7 +122,7 @@ public class ProfesorService {
     }
 
     public void validarUnico(ProfesorDTO dto){
-        if(profesorRepository.existsByEmail(dto.getEmail())){
+        if(usuarioRepository.existsByEmail(dto.getEmail())){
             throw new DuplicadoException("El email " + dto.getEmail() + " ya está registrado. Por favor, revise.");
         }
         if(profesorRepository.existsByNumeroDocumento(dto.getNumeroDocumento())){

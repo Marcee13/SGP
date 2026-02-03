@@ -8,6 +8,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -90,15 +92,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApiResponse<>(mensajeUsuario, null, false), HttpStatus.BAD_REQUEST);
     }
 
-    /*@ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> manejarAccesoDenegado(AccessDeniedException ex) {
-        return new ResponseEntity<>(new ApiResponse<>("No tiene permisos para acceder a este recurso.", null, false), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ApiResponse<>("Acceso denegado: No tiene permisos para acceder a este recurso.", null, false), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Object>> manejarErrorAutenticacion(AuthenticationException ex) {
         return new ResponseEntity<>(new ApiResponse<>("No autorizado. Inicie sesión nuevamente.", null, false), HttpStatus.UNAUTHORIZED);
-    }*/
+    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleNotFound(NoResourceFoundException ex) {

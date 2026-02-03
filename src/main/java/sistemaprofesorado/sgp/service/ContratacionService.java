@@ -1,7 +1,12 @@
 package sistemaprofesorado.sgp.service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -10,6 +15,7 @@ import sistemaprofesorado.sgp.dto.ContratoDTO;
 import sistemaprofesorado.sgp.dto.CrearContratoDTO;
 import sistemaprofesorado.sgp.enums.EstadoAplicacion;
 import sistemaprofesorado.sgp.enums.EstadoProfesor;
+import sistemaprofesorado.sgp.exceptions.PdfGenerationException;
 import sistemaprofesorado.sgp.exceptions.RecursoNoEncontradoException;
 import sistemaprofesorado.sgp.mapper.ContratoMapper;
 import sistemaprofesorado.sgp.model.Aplicacion;
@@ -26,6 +32,7 @@ public class ContratacionService {
     private final ProfesorRepository profesorRepository;
     private final ContratoRepository contratoRepository;
     private final ContratoMapper contratoMapper;
+    private final PdfService pdfService;
 
     @Transactional
     public ContratoDTO contratarProfesor(CrearContratoDTO datos) {
@@ -69,5 +76,46 @@ public class ContratacionService {
         char inicialNombre=profesor.getNombres().charAt(0);
         char inicialApellido=profesor.getApellidos().charAt(0);
         return String.format("EMP-%c%c-%d-%04d", inicialNombre, inicialApellido, anio, profesor.getIdProfesor());
+    }
+
+    @Transactional
+    public byte[] generarReportePdf(Long contratoId) {
+        
+        Contrato contrato = contratoRepository.findById(contratoId).orElseThrow(() -> new RecursoNoEncontradoException("Contrato no encontrado con ID: " + contratoId));
+
+        validarPermisos(contrato);
+
+        try {
+            return pdfService.generarContratoPdf(contrato);
+        } catch (IOException e) {
+            throw new PdfGenerationException("Error interno al generar el PDF del contrato", e);
+        }
+    }
+
+    private void validarPermisos(Contrato contrato) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            throw new AccessDeniedException("Usuario no autenticado o sesión inválida.");
+        }
+
+        String emailActual = auth.getName(); 
+
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+
+        if (esAdmin) {
+            return;
+        }
+        
+        if (contrato.getProfesor() == null || contrato.getProfesor().getUsuario() == null) {
+            throw new IllegalStateException("El contrato no tiene un profesor o usuario vinculado correctamente.");
+        }
+
+        String emailDuenio = contrato.getProfesor().getUsuario().getEmail();
+
+        if (!emailActual.equals(emailDuenio)) {
+            throw new AccessDeniedException("No tienes permiso para descargar este contrato ajeno.");
+        }
     }
 }

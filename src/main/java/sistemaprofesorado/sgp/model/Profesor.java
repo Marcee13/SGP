@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import sistemaprofesorado.sgp.enums.EstadoCivil;
 import sistemaprofesorado.sgp.enums.EstadoProfesor;
 import sistemaprofesorado.sgp.enums.Generos;
+import sistemaprofesorado.sgp.enums.Rol;
 import sistemaprofesorado.sgp.enums.Sexos;
 import sistemaprofesorado.sgp.enums.TipoDocumento;
 
@@ -23,7 +24,6 @@ public class Profesor {
     private String apellidos;
     @Column(nullable = false, unique = true)
     private String email;
-    private String contrasenia;
     private String numeroTelefonico;
     private LocalDate fechaNacimiento;
     @Enumerated(EnumType.STRING)
@@ -58,6 +58,8 @@ public class Profesor {
     private String documentoDUIPasaporte;
     @Column(name = "documento_NIT")
     private String documentoNIT;
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
 
     public boolean estaActivo(){
         return this.estado!=null&&this.estado.esActivo();
@@ -71,4 +73,8 @@ public class Profesor {
 
     @OneToMany(mappedBy = "profesor", fetch = FetchType.LAZY)
     private List<Contrato> contratos;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario")
+    private Usuario usuario;
 }
