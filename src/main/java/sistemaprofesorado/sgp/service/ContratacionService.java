@@ -102,7 +102,7 @@ public class ContratacionService {
         String emailActual = auth.getName(); 
 
         boolean esAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMINISTRATIVO") || a.getAuthority().equals("ADMINISTRATIVO"));
 
         if (esAdmin) {
             return;

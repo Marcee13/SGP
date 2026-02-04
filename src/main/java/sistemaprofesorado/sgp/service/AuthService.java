@@ -1,5 +1,8 @@
 package sistemaprofesorado.sgp.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -26,10 +29,14 @@ public class AuthService {
                 )
         );
 
-        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getEmail())
-                .orElseThrow();
+        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getEmail()).orElseThrow();
 
-        String token = jwtService.generateToken(usuario);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("rol", usuario.getRol().name()); 
+        extraClaims.put("nombre", usuario.getProfesor() != null ? usuario.getProfesor().getNombres() : "Admin");
+        extraClaims.put("idUsuario", usuario.getIdUsuario());
+
+        String token = jwtService.generateToken(extraClaims,usuario);
 
         return AuthResponse.builder()
                 .token(token)

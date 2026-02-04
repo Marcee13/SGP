@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -30,7 +33,6 @@ public class AplicacionController {
     }
 
     @PatchMapping("/aplicaciones/evaluar/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<AplicacionDTO>> evaluar(@PathVariable Long id, @RequestParam EstadoAplicacion estado, @RequestParam String comentarios){
         AplicacionDTO dto = aplicacionService.evaluarAplicacion(id, estado, comentarios);
 
@@ -45,4 +47,13 @@ public class AplicacionController {
         ApiResponse<List<AplicacionDTO>> respuesta=new ApiResponse<>("Candidatos obtenidos exitosamente.", lista, true);
         return new ResponseEntity<>(respuesta,HttpStatus.OK);
     }
+
+    @GetMapping("/aplicaciones/listar-todas")
+    @PreAuthorize("hasRole('ADMINISTRATIVO')")
+    public ResponseEntity<ApiResponse<List<AplicacionDTO>>> listarTodaslasAplicaciones(){
+        List<AplicacionDTO> aplicaciones=aplicacionService.listarTodas();
+        ApiResponse<List<AplicacionDTO>> respuesta=new ApiResponse<>("Aplicaciones realizadas obtenidas correctamente", aplicaciones, true);
+        return new ResponseEntity<>(respuesta,HttpStatus.OK);
+    }
+    
 }

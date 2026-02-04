@@ -2,11 +2,13 @@ package sistemaprofesorado.sgp.controller;
 
 import java.io.IOException;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lowagie.text.DocumentException;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import sistemaprofesorado.sgp.dto.ContratoDTO;
 import sistemaprofesorado.sgp.dto.CrearContratoDTO;
-import sistemaprofesorado.sgp.model.Contrato;
 import sistemaprofesorado.sgp.response.ApiResponse;
 import sistemaprofesorado.sgp.service.ContratacionService;
-import sistemaprofesorado.sgp.service.PdfService;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,7 +35,6 @@ public class ContratoController {
     private final ContratacionService contratacionService;
 
     @PostMapping("/contratos/generar")
-    @PreAuthorize("hasRole('ADMINISTRATIVO')")
     public ResponseEntity<ApiResponse<ContratoDTO>> generarContrato(@Valid @RequestBody CrearContratoDTO datos) {
         ContratoDTO nuevoContrato = contratacionService.contratarProfesor(datos);
         ApiResponse<ContratoDTO> respuesta = new ApiResponse<>(
@@ -41,16 +45,21 @@ public class ContratoController {
         return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }
 
-    @GetMapping("/descargar-pdf/{id}")
-    public ResponseEntity<byte[]> descargarContrato(@PathVariable Long id) throws IOException {
+    @GetMapping(value="/contratos/descargar-pdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> descargarContrato(@PathVariable Long id)throws DocumentException {
         
         byte[] pdfBytes = contratacionService.generarReportePdf(id);
 
+        ByteArrayResource resource = new ByteArrayResource(pdfBytes);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("inline", "Contrato_Generado.pdf");
+        headers.setContentDispositionFormData("attachment", "Contrato.pdf"); 
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(pdfBytes.length)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 }

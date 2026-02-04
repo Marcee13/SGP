@@ -71,4 +71,10 @@ public class AplicacionService {
 
         return aplicaciones.stream().map(aplicacionMapper::toDTO).toList();
     }
+
+    @Transactional
+    public List<AplicacionDTO> listarTodas(){
+        List<Aplicacion> aplicaciones=aplicacionRepository.findAll();
+        return aplicaciones.stream().map(aplicacionMapper::toDTO).toList();
+    }
 }
