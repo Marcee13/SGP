@@ -10,7 +10,7 @@ import sistemaprofesorado.sgp.enums.TipoContratacion;
 @Data
 @Entity
 @Table(name = "contrato")
-public class Contrato {
+public class Contrato{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idContrato;

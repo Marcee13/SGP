@@ -122,4 +122,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> manejarNoEncontrado(RecursoNoEncontradoException ex){
         return new ResponseEntity<>(new ApiResponse<>(ex.getMessage(), null, false), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> manejarArgumentoInvalido(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(ex.getMessage(), null, false));
+    }
 }

@@ -1,5 +1,6 @@
 package sistemaprofesorado.sgp.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "oferta_laboral")
-public class OfertaLaboral {
+public class OfertaLaboral implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idOferta;

@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,7 +14,6 @@ import sistemaprofesorado.sgp.enums.Generos;
 import sistemaprofesorado.sgp.enums.Rol;
 import sistemaprofesorado.sgp.enums.Sexos;
 import sistemaprofesorado.sgp.enums.TipoDocumento;
-import sistemaprofesorado.sgp.model.Usuario;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

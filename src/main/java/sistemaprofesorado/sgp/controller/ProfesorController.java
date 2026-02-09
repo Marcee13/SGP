@@ -22,6 +22,7 @@ public class ProfesorController {
     private final ProfesorService profesorService;
 
     @GetMapping("/profesores/mi-perfil")
+    @PreAuthorize("hasRole('PROFESOR')")
     public ResponseEntity<ApiResponse<ProfesorDTO>> obtenerMiPerfil(@RequestParam String credencial) {
         ProfesorDTO perfilProfesor = profesorService.buscarPorCarnetOrEmail(credencial);
         ApiResponse<ProfesorDTO> respuesta = new ApiResponse<>(

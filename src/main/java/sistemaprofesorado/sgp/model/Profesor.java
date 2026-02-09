@@ -2,6 +2,7 @@ package sistemaprofesorado.sgp.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import sistemaprofesorado.sgp.enums.TipoDocumento;
 @Data
 @Entity
 @Table(name="profesores")
-public class Profesor {
+public class Profesor implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProfesor;
@@ -66,13 +67,13 @@ public class Profesor {
     }
 
     @OneToMany(mappedBy = "profesor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TituloAcademico> titulos;
+    private transient List<TituloAcademico> titulos;
 
     @OneToMany(mappedBy = "profesor", fetch = FetchType.LAZY)
-    private List<Aplicacion> aplicaciones;
+    private transient List<Aplicacion> aplicaciones;
 
     @OneToMany(mappedBy = "profesor", fetch = FetchType.LAZY)
-    private List<Contrato> contratos;
+    private transient List<Contrato> contratos;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario")

@@ -42,6 +42,7 @@ public class ProfesorService {
 
         Profesor profesorEntity = profesorMapper.toEntity(dto);
         profesorEntity.setEstado(EstadoProfesor.ASPIRANTE);
+        profesorEntity.setRol(Rol.PROFESOR);
         profesorEntity.setNumeroDocumento(numeroLimpio);
         profesorEntity.setCodigoEmpleado(null);
         

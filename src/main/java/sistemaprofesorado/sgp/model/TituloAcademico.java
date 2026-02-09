@@ -1,5 +1,7 @@
 package sistemaprofesorado.sgp.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import sistemaprofesorado.sgp.enums.NivelAcademico;
@@ -7,7 +9,7 @@ import sistemaprofesorado.sgp.enums.NivelAcademico;
 @Data
 @Entity
 @Table(name = "titulo_academico")
-public class TituloAcademico {
+public class TituloAcademico implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTitulo;

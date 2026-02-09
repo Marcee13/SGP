@@ -9,7 +9,7 @@ import sistemaprofesorado.sgp.enums.EstadoAplicacion;
 @Data
 @Entity
 @Table(name = "aplicacion")
-public class Aplicacion {
+public class Aplicacion{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAplicacion;

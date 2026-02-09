@@ -27,7 +27,7 @@ public class Usuario implements UserDetails{
     private Rol rol;
 
     @OneToOne(mappedBy = "usuario") 
-    private Profesor profesor;
+    private transient Profesor profesor;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
