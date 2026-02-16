@@ -1,5 +1,6 @@
 package sistemaprofesorado.sgp.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import sistemaprofesorado.sgp.dto.ProfesorDTO;
 import sistemaprofesorado.sgp.enums.EstadoProfesor;
 import sistemaprofesorado.sgp.enums.Rol;
 import sistemaprofesorado.sgp.exceptions.DuplicadoException;
+import sistemaprofesorado.sgp.exceptions.PdfGenerationException;
 import sistemaprofesorado.sgp.exceptions.RecursoNoEncontradoException;
 import sistemaprofesorado.sgp.mapper.ProfesorMapper;
 import sistemaprofesorado.sgp.model.Profesor;
@@ -25,6 +27,7 @@ public class ProfesorService {
     private final ProfesorMapper profesorMapper;
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
+    private final PdfService pdfService;
 
     @Transactional
     public ProfesorDTO crearProfesor(ProfesorDTO dto) {
@@ -128,6 +131,18 @@ public class ProfesorService {
         }
         if(profesorRepository.existsByNumeroDocumento(dto.getNumeroDocumento())){
             throw new DuplicadoException("El numero de documento " +dto.getNumeroDocumento()+" ya está registrado. Por favor revise.");
+        }
+    }
+
+    @Transactional
+    public byte[] generarCurriculumPdf(Long idProfesor) {
+        
+        Profesor profesor = profesorRepository.findById(idProfesor).orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con ID: " + idProfesor));
+
+        try {
+            return pdfService.generarCurriculumPdf(profesor);
+        } catch (IOException e) {
+            throw new PdfGenerationException("Error interno al generar el PDF del curriculum", e);
         }
     }
 }

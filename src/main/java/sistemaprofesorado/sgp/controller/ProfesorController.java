@@ -12,6 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+
+import com.lowagie.text.DocumentException;
 
 
 
@@ -113,5 +119,20 @@ public class ProfesorController {
             true
         );
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
+    }
+
+    @GetMapping(value="/profesores/descargar-cv/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<Resource> descargarCV(@PathVariable Long id) throws DocumentException{
+        byte[] pdfBytes=profesorService.generarCurriculumPdf(id);
+        ByteArrayResource resource = new ByteArrayResource(pdfBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", "Mi Curriculum.pdf"); 
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(pdfBytes.length)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 }
